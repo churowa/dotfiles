@@ -1,0 +1,300 @@
+" Initial setup.
+set nocompatible
+filetype off
+syntax on
+
+" Vundle plugins.
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+"---------------------------------------------------"
+Plugin 'gmarik/Vundle.vim'                          " Plugin manager
+Plugin 'tpope/vim-sensible'                         " Sensible defaults
+Plugin 'tpope/vim-surround'                         " Surround text blocks
+Plugin 'w0ng/vim-hybrid'                            " Colorsheme
+Plugin 'scrooloose/nerdtree'                        " File browser
+Plugin 'jistr/vim-nerdtree-tabs'                    " NerdTree tabs (:NERDTreeTabsFind)
+Plugin 'ctrlpvim/ctrlp.vim'                         " Fuzzy finder
+Plugin 'scrooloose/syntastic'                       " Syntax checking
+Plugin 'bling/vim-airline'                          " Bottom status line
+Plugin 'tpope/vim-fugitive'                         " Git support for airline
+Plugin 'bling/vim-bufferline'                       " Show open buffers
+Plugin 'scrooloose/nerdcommenter'                   " Comments code
+Plugin 'fatih/vim-go'                               " Go support
+Plugin 'ervandew/supertab'                          " Tab completion
+Plugin 'Yggdroot/indentLine'                        " Indent lines
+Plugin 'Shougo/neocomplete.vim'                     " Syntax completion
+"---------------------------------------------------"
+call vundle#end()
+filetype plugin indent on
+
+" Change leader to comma.
+let mapleader = ','
+
+" MacVim and mouse support.
+if has("gui_macvim")
+    set guifont=Sauce\ Code\ Powerline\ Light:h14
+    set guioptions=cemg
+    set vb
+else
+    set mouse=a
+endif
+
+" Color Scheme.
+let g:hybrid_use_Xresources = 1
+set background=dark
+colorscheme hybrid
+hi Search term=reverse cterm=reverse gui=reverse ctermfg=109
+highlight clear SignColumn
+highlight clear LineNr
+hi clear SpellBad
+hi SpellBad cterm=underline
+
+" Fix clipboard for tmux (shouldn't alter normal behavior).
+set clipboard=unnamed
+
+" Formatting.
+"set relativenumber              " Show relative lines up or down
+"set lazyredraw                  " Buffer screen updates
+set hidden                      " It hides buffers instead of closing them
+set number                      " Show current line number
+set wrap                        " Do wrap long lines
+set autoindent                  " Indent at the same level of the previous line
+set shiftwidth=4                " Use indents of 4 spaces
+set expandtab                   " Tabs are spaces, not tabs
+set tabstop=4                   " An indentation every four columns
+set softtabstop=4               " Let backspace delete indent
+set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
+set splitright                  " Puts new vsplit windows to the right of the current
+set splitbelow                  " Puts new split windows to the bottom of the current
+set backspace=indent,eol,start  " fix backspace
+set history=10000               " Store lots of history
+set ignorecase                  " Case insensitive search
+set smartcase                   " If search contains Upper case, it becomes case sensitive
+set hlsearch                    " Highlight all search matches
+set laststatus=2                " Show two lines below, used by airline / powerline
+set ssop-=options               " do not store global and local values in a session
+set ssop-=folds                 " do not store folds
+set nofoldenable                " Stop the folds
+set nostartofline               " Keep cursor position when switching buffers
+set list                        " Show unwanted spaces/tabs
+set listchars=tab:›\ ,trail:•,extends:#,nbsp:.          " Show whitespace chars
+set spell                       " Enable spellcheck
+set undofile                    " Persistent undo
+set undolevels=1000             " Maximum number of changes that can be reverted
+set undoreload=10000            " Maximum number of lines to save for undo
+
+" Jump by visual line, not physical line.
+noremap j gj
+noremap k gk
+
+" jk == escape
+imap <special> jk <Esc>
+
+"Move line of text either up or down using - and _
+noremap _ :call feedkeys( line('.')==1 ? '' : 'ddkP' )<CR>
+noremap - ddp
+
+" Clear search with `<leader>/`.
+nmap <silent> <leader>/ :nohlsearch<CR>
+
+" Toggle code paste.
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+
+" Fix a few shift key bindings.
+command! -bang -nargs=* -complete=file E e<bang> <args>
+command! -bang -nargs=* -complete=file W w<bang> <args>
+command! -bang -nargs=* -complete=file Wq wq<bang> <args>
+command! -bang -nargs=* -complete=file WQ wq<bang> <args>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>
+command! -bang Q q<bang>
+command! -bang QA qa<bang>
+command! -bang Qa qa<bang>
+
+" Tweak filetypes
+au FileType css setl sw=2 sts=2 et
+au FileType scss setl sw=2 sts=2 et
+au FileType less setl sw=2 sts=2 et
+au FileType html setl sw=2 sts=2 et
+au FileType javascript setl sw=2 sts=2 et
+au FileType json setl sw=2 sts=2 et
+au FileType python setl sw=4 sts=4 et
+au FileType php setl sw=4 sts=4 et
+autocmd BufNewFile,BufRead *.md setlocal textwidth=80
+autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+autocmd BufNewFile,BufRead *.html.twig set filetype=html.twig
+autocmd FileType haskell,puppet,ruby,yml setlocal expandtab shiftwidth=2 softtabstop=2
+autocmd FileType go,php,javascript,puppet,python,rust,twig,xml,yml,perl,sql,css,scss,json autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+autocmd Filetype gitcommit setlocal spell textwidth=72
+
+" NERDTree.
+map <C-e> <plug>NERDTreeTabsToggle<CR>
+map <leader>e :NERDTreeFind<CR>
+let NERDTreeShowHidden=1
+let NERDTreeShowBookmarks=0
+let NERDTreeIgnore=['\.DS_Store$', '\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
+
+" Tab mappings.
+nnoremap <leader>[ :bp<cr>
+nnoremap <leader>] :bn<cr>
+nnoremap <leader>q :bd<cr>
+
+" Quick window change.
+nnoremap <leader>w <C-w><C-w>
+nnoremap <leader>h <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
+
+" Disable json quote concealing.
+let g:vim_json_syntax_conceal = 0
+
+" Splitting.
+map <Leader>- :split<CR>
+map <Leader><bar> :vsplit<CR>
+
+" Airline.
+let g:bufferline_echo = 0
+let g:airline_section_c = '%f'
+let g:airline_theme = 'hybrid'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+" Syntastic.
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map={ 'mode': 'active', 'active_filetypes': [], 'passive_filetypes': ['twig', 'scss', 'go'] }
+let g:syntastic_javascript_checkers = ['jsxhint']
+
+" Neocomplete.
+let g:acp_enableAtStartup = 0
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+let g:neocomplete#sources#syntax#min_keyword_length = 2
+
+" YouCompleteMe.
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_add_preview_to_completeopt = 0
+set completeopt-=preview
+let g:ycm_semantic_triggers =  {
+  \   'c' : ['->', '.'],
+  \   'objc' : ['->', '.'],
+  \   'cpp,objcpp' : ['->', '.', '::'],
+  \   'perl' : ['->'],
+  \   'php' : ['->', '::'],
+  \   'cs,java,javascript,d,vim,ruby,python,perl6,scala,vb,elixir,go' : ['.'],
+  \   'lua' : ['.', ':'],
+  \   'erlang' : [':'],
+  \ }
+
+" TagBar.
+nnoremap <silent> <leader>tt :TagbarToggle<CR>
+
+" PHP Highlighting
+function! PhpSyntaxOverride()
+  hi! def link phpDocTags  phpDefine
+  hi! def link phpDocParam phpType
+endfunction
+
+augroup phpSyntaxOverride
+  autocmd!
+  autocmd FileType php call PhpSyntaxOverride()
+augroup END
+
+" PHP-CS-Fixer.
+nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
+
+" Hide some files... Especially for Symfony.
+set wildignore+=app/cache/**/*,*/app/cache/*,*/tmp/*,*.so,*.swp,*.zip
+
+" Indent Guides tweak.
+let g:indent_guides_enable_on_vim_startup = 1
+
+" Supertab.
+let g:SuperTabDefaultCompletionType = "<c-n>"
+
+" Vim-Go.
+let g:go_fmt_command = "goimports"
+au FileType go nmap <leader>c <Plug>(go-coverage)
+au FileType go nmap gd <Plug>(go-def)
+au FileType go nmap <Leader>r <Plug>(go-rename)
+au FileType go nmap <leader>c <Plug>(go-coverlay) "test coverage then overlay covered lines
+au FileType go nmap <leader>C <Plug>(go-clearlay) "clear overlay
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+
+" CtrlP should us `ag`.
+if executable('ag')
+    " Use ag over grep.
+    set grepprg=ag\ --nogroup\ --nocolor
+
+    " Use ag in CtrlP for listing files. Lightning fast and
+    " respects .gitignore.
+    let g:ctrlp_user_command = 'ag -i %s -l --nocolor --nogroup -g ""'
+
+    " ag is fast enough that CtrlP doesn't need to cache.
+    let g:ctrlp_use_caching = 0
+endif
+
+" Cleans up trailing whitespace.
+function! StripTrailingWhitespace()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " do the business:
+    %s/\s\+$//e
+    " clean up: restore previous search history, and cursor position.
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+" Borrowed from spf-13.
+function! InitializeDirectories()
+    let parent = $HOME
+    let prefix = 'vim'
+    let dir_list = {
+                \ 'backup': 'backupdir',
+                \ 'views': 'viewdir',
+                \ 'swap': 'directory' }
+
+    if has('persistent_undo')
+        let dir_list['undo'] = 'undodir'
+    endif
+
+    let common_dir = parent . '/.' . prefix
+
+    for [dirname, settingname] in items(dir_list)
+        let directory = common_dir . dirname . '/'
+        if exists("*mkdir")
+            if !isdirectory(directory)
+                call mkdir(directory)
+            endif
+        endif
+        if !isdirectory(directory)
+            echo "Warning: Unable to create backup directory: " . directory
+            echo "Try: mkdir -p " . directory
+        else
+            let directory = substitute(directory, " ", "\\\\ ", "g")
+            exec "set " . settingname . "=" . directory
+        endif
+    endfor
+endfunction
+call InitializeDirectories()
+
+" Project specific settings.
+if filereadable(".vim.custom")
+    so .vim.custom
+endif

@@ -1,0 +1,70 @@
+# Use system bashrc if available.
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+if [ -f ~/.bash_prompt ]; then
+    . ~/.bash_prompt
+fi
+
+if [ -f ~/.bash_local ]; then
+    . ~/.bash_local
+fi
+
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+    . `brew --prefix`/etc/bash_completion
+fi
+
+if [ -f `brew --prefix`/etc/bash_completion.d/git-completion.bash ]; then
+    . `brew --prefix`/etc/bash_completion.d/git-completion.bash
+fi
+
+if [ -f ~/google-cloud-sdk/completion.bash.inc ]; then
+    . ~/google-cloud-sdk/completion.bash.inc
+fi
+
+if [ -f ~/google-cloud-sdk/path.bash.inc ]; then
+    . ~/google-cloud-sdk/path.bash.inc
+fi
+
+# Basics
+alias cp='cp -i'
+alias df='df -h'
+alias mv='mv -i'
+alias rm='trash'
+alias rmrm='/usr/local/opt/coreutils/libexec/gnubin/rm'
+
+# Navigation fail fix
+alias cd..="cd .."
+
+# Custom
+alias less='less -iL -m'
+
+alias rm_pyc='find . -name "*.pyc" -exec rm -rf {} \; && find . -name "__pycache__" -exec rm -rf {} \; > /dev/null 2>&1'
+alias rm_dsstore='find . -name "*.DS_Store" -exec rm -rf {} \;'
+
+alias lsize='du -hs'
+alias lsizes='du -hs * | sort -h'
+
+alias bup="brew update && echo '--------------------------------' && brew outdated"
+alias o="open ./"
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com && ifconfig | grep \"inet \" | grep -v 127.0.0.1 | cut -d\  -f2"
+
+# epoch 1453683720 -u
+epoch() { date +"%a %b %d %l:%M:%S %p %Z %Y" -d @$1 $2; }
+
+# Git
+alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
+
+# Nice ls output
+alias ll="ls -lAFh --color"
+alias llc="ls -lFh --color"
+
+export HISTSIZE=""
+export PAGER=less
+export EDITOR=nvim
+
+export PATH=./bin:./node_modules/.bin:$GOROOT/bin:$HOME/gocode/bin:$(brew --prefix coreutils)/libexec/gnubin:$(brew --prefix gnu-sed)/libexec/gnubin:/usr/local/bin:/usr/local/sbin:~/bin:/usr/local/share/npm/bin:/Applications/Postgres.app/Contents/Versions/9.5/bin:$PATH
+
+export MANPATH=$(brew --prefix coreutils)/libexec/gnuman:$(brew --prefix gnu-sed)/libexec/gnuman:$MANPATH
+

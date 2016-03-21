@@ -1,0 +1,14 @@
+[user]
+    name = Francis Chary
+    email = fchary@gmail.com
+[github]
+    user = churowa
+[color]
+    ui = auto
+[core]
+    autocrlf = false
+    editor = nvim
+    pager = less -r
+    excludesfile = /Users/francis/.gitignore_global
+[push]
+    default = simple
